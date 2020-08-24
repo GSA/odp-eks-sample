@@ -107,10 +107,6 @@ jobs:
     steps:
       - checkout
       - setup-environment-vars
-      - dependency-prep            
-      - run-terraform: 
-          terraform_dir: terraform
-          run_command: validate    
       - run-terraform: 
           terraform_dir: terraform          
           run_command: plan -input=false 
