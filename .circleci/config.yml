@@ -125,7 +125,7 @@ jobs:
       - checkout
       - setup-environment-vars
       - run-terraform:   
-          terraform_dir: terraform/   
+          terraform_dir: ./   
           run_command:  apply -input=false -auto-approve   
           tf_destroy: ${TERRAFORM_DESTROY}
 
