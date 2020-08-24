@@ -1,0 +1,157 @@
+version: 2.1
+
+# First we will define the jobs that are used in the workflows.
+#     
+# Workflows can be found at the bottom of this file.  They specify
+# what order the jobs run in and what depends on what.
+
+commands:
+   
+  setup-environment-vars: 
+    description: "Setup environment variables."
+    steps:
+      - run:
+          name: Set extra environment variables.
+          command: |
+
+            # Set variables if you require interporlation or do not wish to have the redacted.
+            #Access these variables by issuing this command `. ${BASH_ENV}` 
+            cat \<<EOF >> $BASH_ENV
+            export EXAMPLE_VAR="EXAMPLE"
+            EOF
+  
+  run-terraform:
+    description: "Run Terraform commands."
+    parameters:
+      run_command:
+        type: string
+        default: "validate"
+      tf_destroy:
+        type: string
+        default: "false"        
+      terraform_dir:
+        type: string
+        default: "terraform"
+    steps:
+      - run:
+          name: Run Terraform commands. 
+          command: |
+            . ${BASH_ENV}
+            export tf_destroy=<< parameters.tf_destroy >>
+
+            cd << parameters.terraform_dir >> 
+            
+            terraform version
+
+            if [ "${tf_command}" != "validate" ]
+            then
+              terraform init -backend-config="bucket=${BACKEND_BUCKET}" -backend-config="key=terraform-states/${CIRCLE_PROJECT_REPONAME}/${TF_VAR_appenv}" -backend-config="region=${TF_VAR_aws_region}"
+            else
+              terraform init
+            fi
+
+            if [ "${tf_destroy}" != "only" ]
+            then  
+              terraform << parameters.run_command >>  
+            fi
+            
+            #Destroy infrastructure if requested 
+            
+            if [ "${tf_destroy}" != "false" ]
+            then 
+              terraform destroy -var-file=../terraform/ref-arch.tfvars -auto-approve  
+            fi
+
+  tflint-tfsec: 
+    description: "Runs tflint and tfsec against ODP reference archirecture terraform code."
+    parameters:     
+      terraform_dir:
+        type: string
+        default: "terraform"
+    steps:
+      - run:
+          name: Running tflint and tfsec
+          command: |
+            # Change directories to the desired source directory
+            cd << parameters.terraform_dir >>
+            # Install curl to allow for tflint download
+            apk add --update curl && apk add --update sudo && apk upgrade
+            # Downland and unzip tflint
+            curl -L -o /tmp/tflint.zip https://github.com/terraform-linters/tflint/releases/download/v0.13.2/tflint_linux_amd64.zip && unzip /tmp/tflint.zip -d /usr/local/bin
+            # Run tflint against all tf files starting from pwd.
+            find . -name ".terraform" -prune -o -type f -name "*.tf" -exec dirname {} \;|sort -u | while read m; do (cd "$m" && tflint && echo "√ $m") || exit 1 ; done
+            # Download and install tfsec
+            sudo wget -O /usr/local/bin/tfsec https://github.com/liamg/tfsec/releases/download/v0.19.0/tfsec-linux-amd64 && sudo chmod +x /usr/local/bin/tfsec
+            # Run tfsec
+            echo "Run tfsec"
+            tfsec ./
+
+
+jobs:  
+ 
+  terraform-checker:
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - checkout
+      - setup-environment-vars
+      - run-terraform:
+          terraform_dir: terraform
+          run_command: validate
+      - tflint-tfsec:
+          terraform_dir: ./
+
+  terraform-plan:
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - checkout
+      - setup-environment-vars
+      - dependency-prep            
+      - run-terraform: 
+          terraform_dir: terraform
+          run_command: validate -var-file=../terraform/ref-arch.tfvars      
+      - run-terraform: 
+          terraform_dir: terraform          
+          run_command: plan -input=false -var-file=../terraform/ref-arch.tfvars
+
+  terraform-apply:
+    parameters:
+      destroy:
+        type: string
+        default: ""   
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - checkout
+      - setup-environment-vars
+      - run-terraform:   
+          terraform_dir: terraform/   
+          run_command:  apply -input=false -var-file=../terraform/ref-arch.tfvars -auto-approve   
+          also_destroy: ${TERRAFORM_DESTROY}
+
+#These are the workflows that define what CircleCI actually does.
+workflows:
+  version: 2.1
+  scan_build_and_deploy:    
+    jobs:     
+      - terraform-checker
+      - terraform-plan:
+          requires:
+            - terraform-checker     
+          filters:
+            tags:
+              only: /.*/
+                   
+      - terraform-apply:
+          requires:
+            - terraform-plan      
+          filters:
+            tags:
+              only: /.*/             
+            branches:
+              only:
+                # This is the list of branches which will trigger a terraform run.
+                - master  
+                - dev 
+                - test
