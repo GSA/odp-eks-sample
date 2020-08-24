@@ -48,7 +48,7 @@ commands:
 
             if [ "${tf_command}" != "validate" ]
             then
-              terraform init -backend-config="bucket=${BACKEND_BUCKET}" -backend-config="key=terraform-states/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}.tfstate""
+              terraform init -backend-config="bucket=${BACKEND_BUCKET}" -backend-config="key=terraform-states/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}.tfstate"
             else
               terraform init
             fi
