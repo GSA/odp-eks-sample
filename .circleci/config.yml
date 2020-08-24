@@ -45,7 +45,7 @@ commands:
 
             if [ "${tf_command}" != "validate" ]
             then
-              terraform init -backend-config="bucket=${BACKEND_BUCKET}" -backend-config="key=terraform-states/${CIRCLE_PROJECT_REPONAME}/${TF_VAR_appenv}" -backend-config="region=${TF_VAR_aws_region}"
+              terraform init -backend-config="bucket=${BACKEND_BUCKET}" -backend-config="key=terraform-states/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}.tfstate""
             else
               terraform init
             fi
@@ -110,10 +110,10 @@ jobs:
       - dependency-prep            
       - run-terraform: 
           terraform_dir: terraform
-          run_command: validate -var-file=../terraform/ref-arch.tfvars      
+          run_command: validate    
       - run-terraform: 
           terraform_dir: terraform          
-          run_command: plan -input=false -var-file=../terraform/ref-arch.tfvars
+          run_command: plan -input=false 
 
   terraform-apply:
     parameters:
@@ -127,7 +127,7 @@ jobs:
       - setup-environment-vars
       - run-terraform:   
           terraform_dir: terraform/   
-          run_command:  apply -input=false -var-file=../terraform/ref-arch.tfvars -auto-approve   
+          run_command:  apply -input=false -auto-approve   
           also_destroy: ${TERRAFORM_DESTROY}
 
 #These are the workflows that define what CircleCI actually does.
