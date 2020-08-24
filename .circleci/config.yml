@@ -99,7 +99,7 @@ jobs:
       - checkout
       - setup-environment-vars
       - run-terraform:
-          terraform_dir: terraform
+          terraform_dir: ./
           run_command: validate
       - tflint-tfsec:
           terraform_dir: ./
@@ -111,7 +111,7 @@ jobs:
       - checkout
       - setup-environment-vars
       - run-terraform: 
-          terraform_dir: terraform          
+          terraform_dir: ./          
           run_command: plan -input=false 
 
   terraform-apply:
