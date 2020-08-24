@@ -136,12 +136,10 @@ workflows:
   scan_build_and_deploy:    
     jobs:     
       - terraform-checker
+
       - terraform-plan:
           requires:
             - terraform-checker     
-          filters:
-            tags:
-              only: /.*/
                    
       - terraform-apply:
           requires:
