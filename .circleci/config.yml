@@ -20,7 +20,7 @@ commands:
             # Set to 'true' to `terraform apply` then `terraform destroy` for tests
             # Set to 'false' to just `terraform apply`
             # Set to 'only' to only run `terraform destroy` clean up
-            export TERRAFORM_DESTROY="false"
+            export TERRAFORM_DESTROY="only"
             EOF
   
   run-terraform:
