@@ -40,28 +40,29 @@ commands:
           name: Run Terraform commands. 
           command: |
 
+            . ${BASH_ENV}
             echo "Setting environment variables"
-            echo $TERRAFORM_DESTROY
-            export tf_destroy=<< parameters.tf_destroy >>
+            echo "Terraform will destroy: $TERRAFORM_DESTROY"
+            export TF_DESTROY=<< parameters.tf_destroy >>
 
             cd << parameters.terraform_dir >> 
             terraform version
 
-            if [ "${tf_command}" != "validate" ]
+            if [ "${TF_DESTROY}" != "validate" ]
             then
               terraform init -backend-config="bucket=${BACKEND_BUCKET}" -backend-config="key=terraform-states/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}.tfstate"
             else
               terraform init
             fi
 
-            if [ "${tf_destroy}" != "only" ]
+            if [ "${TF_DESTROY}" != "only" ]
             then  
               terraform << parameters.run_command >>  
             fi
             
             # Destroy infrastructure if requested 
             
-            if [ "${tf_destroy}" != "false" ]
+            if [ "${TF_DESTROY}" != "false" ]
             then 
               terraform destroy -auto-approve  
             fi
