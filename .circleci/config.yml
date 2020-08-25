@@ -15,7 +15,7 @@ commands:
           command: |
 
             # Set variables if you require interporlation or do not wish to have the redacted.
-            #Access these variables by issuing this command `. ${BASH_ENV}` 
+            # Access these variables by issuing this command `. ${BASH_ENV}` 
             cat \<<EOF >> $BASH_ENV
             # Set to 'true' to `terraform apply` then `terraform destroy` for tests
             # Set to 'false' to just `terraform apply`
@@ -39,8 +39,9 @@ commands:
       - run:
           name: Run Terraform commands. 
           command: |
+
             echo "Setting environment variables"
-            #. ${BASH_ENV}
+            echo $TERRAFORM_DESTROY
             export tf_destroy=<< parameters.tf_destroy >>
 
             cd << parameters.terraform_dir >> 
@@ -58,7 +59,7 @@ commands:
               terraform << parameters.run_command >>  
             fi
             
-            #Destroy infrastructure if requested 
+            # Destroy infrastructure if requested 
             
             if [ "${tf_destroy}" != "false" ]
             then 
