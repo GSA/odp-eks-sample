@@ -39,11 +39,11 @@ commands:
       - run:
           name: Run Terraform commands. 
           command: |
+            echo "Setting environment variables"
             . ${BASH_ENV}
             export tf_destroy=<< parameters.tf_destroy >>
 
             cd << parameters.terraform_dir >> 
-            
             terraform version
 
             if [ "${tf_command}" != "validate" ]
