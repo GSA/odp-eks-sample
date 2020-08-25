@@ -20,7 +20,7 @@ commands:
             # Set to 'true' to `terraform apply` then `terraform destroy` for tests
             # Set to 'false' to just `terraform apply`
             # Set to 'only' to only run `terraform destroy` clean up
-            export TERRAFORM_DESTROY="only"
+            export TERRAFORM_DESTROY="false"
             EOF
   
   run-terraform:
@@ -40,7 +40,7 @@ commands:
           name: Run Terraform commands. 
           command: |
             echo "Setting environment variables"
-            . ${BASH_ENV}
+            #. ${BASH_ENV}
             export tf_destroy=<< parameters.tf_destroy >>
 
             cd << parameters.terraform_dir >> 
