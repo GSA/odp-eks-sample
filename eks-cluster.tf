@@ -7,6 +7,7 @@ module "eks" {
     Environment = "training"
     GithubRepo  = "terraform-aws-eks"
     GithubOrg   = "terraform-aws-modules"
+    instance-parker = "always"
   }
 
   vpc_id = module.vpc.vpc_id
