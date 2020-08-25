@@ -4,7 +4,6 @@ variable "project" {
     description = "Variable used for naming prefix and tagging."
 }
 
-
 variable "region" {
     default = "us-east-1"
     type = string
