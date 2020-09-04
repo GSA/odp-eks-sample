@@ -17,7 +17,7 @@ commands:
             # Set variables if you require interporlation or do not wish to have the redacted.
             # Access these variables by issuing this command `. ${BASH_ENV}` 
             cat \<<EOF >> $BASH_ENV
-            export TERRAFORM_DESTROY="false"
+            export TERRAFORM_DESTROY="only"
             EOF
   
   run-terraform:
@@ -87,7 +87,6 @@ commands:
             # Run tfsec
             echo "Run tfsec"
             tfsec ./
-
 
 jobs:  
  
