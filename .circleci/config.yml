@@ -17,7 +17,7 @@ commands:
             # Set variables if you require interporlation or do not wish to have the redacted.
             # Access these variables by issuing this command `. ${BASH_ENV}` 
             cat \<<EOF >> $BASH_ENV
-            export TERRAFORM_DESTROY="destroy"
+            export TERRAFORM_DESTROY="false"
             EOF
   
   run-terraform:
