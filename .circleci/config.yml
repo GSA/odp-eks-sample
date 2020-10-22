@@ -86,7 +86,7 @@ commands:
             sudo wget -O /usr/local/bin/tfsec https://github.com/liamg/tfsec/releases/latest/download/tfsec-linux-amd64 && sudo chmod +x /usr/local/bin/tfsec
             # Run tfsec
             echo "Run tfsec"
-            tfsec ./
+            tfsec ./ || echo "Failures detected..."
 
 jobs:  
  
