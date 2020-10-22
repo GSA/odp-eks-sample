@@ -108,9 +108,9 @@ jobs:
     steps:
       - checkout
       - setup-environment-vars
-      - run-terraform: 
-          terraform_dir: ./          
-          run_command: plan -input=false 
+#      - run-terraform: 
+#          terraform_dir: ./          
+#          run_command: plan -input=false 
 
   terraform-apply:
     parameters:
