@@ -92,7 +92,7 @@ jobs:
  
   terraform-checker:
     docker:
-      - image: hashicorp/terraform:0.13.2
+      - image: hashicorp/terraform:0.13.4
     steps:
       - checkout
       - setup-environment-vars
@@ -104,7 +104,7 @@ jobs:
 
   terraform-plan:
     docker:
-      - image: hashicorp/terraform:latest
+      - image: hashicorp/terraform:0.13.4
     steps:
       - checkout
       - setup-environment-vars
@@ -118,7 +118,7 @@ jobs:
         type: string
         default: ""   
     docker:
-      - image: hashicorp/terraform:0.13.2
+      - image: hashicorp/terraform:0.13.4
     steps:
       - checkout
       - setup-environment-vars
