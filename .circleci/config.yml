@@ -92,7 +92,7 @@ jobs:
  
   terraform-checker:
     docker:
-      - image: hashicorp/terraform:0.13.2
+      - image: hashicorp/terraform:0.13.5
     steps:
       - checkout
       - setup-environment-vars
