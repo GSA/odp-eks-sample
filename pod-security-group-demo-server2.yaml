@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-server2
+  namespace: test-ns
+  labels:
+    app: demo-server2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-server2
+  template:
+    metadata:
+      labels:
+        app: demo-server2
+        role: test-ns-role
+    spec:
+      containers:
+        - name: server-nginx
+          image: nginx
+          ports:
+            - containerPort: 80
