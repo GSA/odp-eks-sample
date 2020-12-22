@@ -1,0 +1,12 @@
+apiVersion: vpcresources.k8s.aws/v1beta1
+kind: SecurityGroupPolicy
+metadata:
+  name: test-security-group-policy
+  namespace: test-ns
+spec:
+  podSelector:
+    matchLabels:
+      role: test-ns-role
+  securityGroups:
+    groupIds:
+      - <sg-id_goes_here>
