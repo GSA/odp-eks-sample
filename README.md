@@ -119,3 +119,9 @@ You can view these outputs again by running:
 $ terraform output
 ```
 
+# Configure Pod Security Groups
+
+1. Apply Pod Security Group Policy: `kubectl apply -f security-group-policy.yaml`
+ - Ensure that this security group `groupIds` exists first!
+2. Deploy application(s) that match the `podSelector` described in the `SecurityGroupPolicy`: `kubectl apply -f pod-security-group-demo-server1.yaml -f pod-security-group-demo-server2.yaml`
+3. Test pod to pod communication: 
